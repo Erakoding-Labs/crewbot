@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* App is dark-only. Tokens stored as HSL channels for Tailwind. */
+    --background: 240 6% 4%; /* #0A0A0B */
+    --foreground: 0 0% 100%;
+
+    --sidebar: 240 8% 6%; /* #0D0D0F */
+    --surface: 240 4% 8%; /* ~#141416 */
+    --surface-hover: 240 4% 11%;
+
+    --card: 240 4% 8%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 240 6% 7%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 247 81% 69%; /* #7C6DF2 */
+    --primary-hover: 247 86% 73%; /* #8B7FF5 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 4% 13%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 240 4% 13%;
+    --muted-foreground: 220 9% 60%; /* ~#9CA3AF */
+
+    --accent: 240 4% 13%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 100% / 0.07;
+    --input: 0 0% 100% / 0.1;
+    --ring: 247 81% 69%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Thin scrollbars to match the dark UI */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+  }
+}
