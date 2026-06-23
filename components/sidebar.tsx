@@ -6,26 +6,56 @@ import {
   LayoutDashboard,
   Users,
   TrendingUp,
+  Compass,
+  MessageSquare,
+  Bell,
   BookOpen,
   Bot,
+  Settings,
   ChevronRight,
   LogOut,
+  User as UserIcon,
+  Building2,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useStore } from "@/lib/store/store";
 
 const NAV = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Team", href: "/team", icon: Users },
+  { label: "Discover", href: "/discover", icon: Compass },
   { label: "Investors", href: "/investors", icon: TrendingUp },
+  { label: "Messages", href: "/messages", icon: MessageSquare },
+  { label: "Notifications", href: "/notifications", icon: Bell, badge: true },
   { label: "Learning Hub", href: "/learning", icon: BookOpen },
   { label: "AI Copilot", href: "/copilot", icon: Bot },
+];
+
+const SECONDARY = [
+  { label: "My Profile", href: "/profile", icon: UserIcon },
+  { label: "My Startup", href: "/startup", icon: Building2 },
+  { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 /** Sidebar contents — reused by both the desktop rail and the mobile drawer. */
 export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { currentUser, unreadNotificationCount, getStartup, logout } = useStore();
+
+  const unread = unreadNotificationCount();
+  const startup = getStartup(currentUser?.startupId);
+
+  const linkClass = (href: string) => {
+    const active = pathname === href;
+    return cn(
+      "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+      active
+        ? "bg-primary/10 text-foreground"
+        : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+    );
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -36,28 +66,36 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </div>
         <div className="leading-tight">
           <p className="text-sm font-semibold text-foreground">FounderOS</p>
-          <p className="text-xs text-muted-foreground">XYZ corp.</p>
+          <p className="text-xs text-muted-foreground">{startup?.name ?? "No startup yet"}</p>
         </div>
       </div>
 
       <div className="mx-6 border-t border-border" />
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {NAV.map(({ label, href, icon: Icon }) => {
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4 scrollbar-thin">
+        {NAV.map(({ label, href, icon: Icon, badge }) => {
           const active = pathname === href;
           return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onNavigate}
-              className={cn(
-                "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary/10 text-foreground"
-                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+            <Link key={href} href={href} onClick={onNavigate} className={linkClass(href)}>
+              <Icon className="h-[18px] w-[18px]" />
+              <span className="flex-1">{label}</span>
+              {badge && unread > 0 && (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
+                  {unread}
+                </span>
               )}
-            >
+              {active && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+            </Link>
+          );
+        })}
+
+        <div className="my-2 mx-3 border-t border-border" />
+
+        {SECONDARY.map(({ label, href, icon: Icon }) => {
+          const active = pathname === href;
+          return (
+            <Link key={href} href={href} onClick={onNavigate} className={linkClass(href)}>
               <Icon className="h-[18px] w-[18px]" />
               <span className="flex-1">{label}</span>
               {active && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
@@ -68,10 +106,15 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
       {/* User / sign out */}
       <div className="mt-auto px-6 py-5">
-        <p className="text-sm font-medium text-foreground">Akshay</p>
-        <p className="mb-4 text-xs text-muted-foreground">akshaycrln@gmail.com</p>
+        <p className="text-sm font-medium text-foreground">{currentUser?.name ?? "Guest"}</p>
+        <p className="mb-4 truncate text-xs text-muted-foreground">
+          {currentUser?.email ?? ""}
+        </p>
         <button
-          onClick={() => router.push("/login")}
+          onClick={() => {
+            logout();
+            router.push("/login");
+          }}
           className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <LogOut className="h-4 w-4" />

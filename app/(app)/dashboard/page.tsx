@@ -9,12 +9,15 @@ import { ActionItemRow } from "@/components/action-item-row";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/components/app-state";
+import { useStore } from "@/lib/store/store";
 
 import { teamMembers, tasks } from "@/lib/mock/team";
 import { insights, actionItems } from "@/lib/mock/copilot";
 
 export default function DashboardPage() {
   const { savedInvestors, completedResources } = useAppState();
+  const { currentUser, getStartup } = useStore();
+  const startup = getStartup(currentUser?.startupId);
 
   const done = tasks.filter((t) => t.status === "done").length;
   const inProgress = tasks.filter((t) => t.status === "in-progress").length;
@@ -23,7 +26,10 @@ export default function DashboardPage() {
 
   return (
     <>
-      <PageHeader title="Good to see you, Akshay" subtitle="XYZ corp." />
+      <PageHeader
+        title={`Good to see you, ${currentUser?.name ?? "Founder"}`}
+        subtitle={startup?.name ?? "Set up your startup to get started"}
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

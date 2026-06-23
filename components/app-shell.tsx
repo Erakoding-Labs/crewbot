@@ -1,17 +1,35 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import { Sidebar, SidebarContent } from "@/components/sidebar";
 import { AppStateProvider } from "@/components/app-state";
+import { useStore } from "@/lib/store/store";
 
 /**
  * Layout wrapper for every authenticated page: fixed sidebar on desktop,
  * slide-in drawer on mobile, and the scrolling main content area.
+ * Also acts as the auth guard — redirects to /login when logged out.
  */
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const { ready, currentUser } = useStore();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (ready && !currentUser) router.replace("/login");
+  }, [ready, currentUser, router]);
+
+  // Avoid flashing protected content before the session is known.
+  if (!ready || !currentUser) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+        Loading…
+      </div>
+    );
+  }
 
   return (
     <AppStateProvider>

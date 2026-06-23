@@ -1,17 +1,13 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Eye,
-  EyeOff,
-  KeyRound,
-  Github,
-  Apple,
-} from "lucide-react";
+import { Eye, EyeOff, KeyRound, Github, Apple } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useStore } from "@/lib/store/store";
 
 /** Small inline brand glyphs for the social login buttons. */
 function GoogleIcon() {
@@ -47,11 +43,22 @@ const SOCIALS = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useStore();
   const [showPassword, setShowPassword] = React.useState(false);
+  const [email, setEmail] = React.useState("akshaycrln@gmail.com");
+  const [password, setPassword] = React.useState("password");
+  const [error, setError] = React.useState("");
 
-  // Mock auth — any submit routes through to the dashboard.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const res = login(email, password);
+    if (res.ok) router.push("/dashboard");
+    else setError(res.error ?? "Login failed.");
+  };
+
+  // Social buttons sign in as the demo account for convenience (mock).
+  const demoLogin = () => {
+    login("akshaycrln@gmail.com", "password");
     router.push("/dashboard");
   };
 
@@ -79,7 +86,8 @@ export default function LoginPage() {
               <Input
                 type="text"
                 autoComplete="username"
-                defaultValue="akshaycrln@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-blue-500"
               />
             </div>
@@ -92,7 +100,8 @@ export default function LoginPage() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
-                  defaultValue="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="border-neutral-300 bg-white pr-10 text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-blue-500"
                 />
                 <button
@@ -101,14 +110,12 @@ export default function LoginPage() {
                   onClick={() => setShowPassword((s) => !s)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
+
+            {error && <p className="text-sm text-red-600">{error}</p>}
 
             <Button
               type="submit"
@@ -119,9 +126,12 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-4 text-center">
-            <a href="#" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">
+            <Link
+              href="/forgot-password"
+              className="text-sm font-medium text-neutral-600 hover:text-neutral-900"
+            >
               Forgot password?
-            </a>
+            </Link>
           </div>
 
           <div className="my-6 border-t border-neutral-300" />
@@ -131,7 +141,7 @@ export default function LoginPage() {
               <button
                 key={s.label}
                 type="button"
-                onClick={handleSubmit}
+                onClick={demoLogin}
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-200"
               >
                 {s.icon}
@@ -142,9 +152,9 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-neutral-600">
             New to FounderOS?{" "}
-            <a href="#" className="font-medium text-[#d97757] hover:underline">
+            <Link href="/signup" className="font-medium text-[#d97757] hover:underline">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>
