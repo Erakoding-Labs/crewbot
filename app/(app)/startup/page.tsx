@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Globe, Users, Plus, X } from "lucide-react";
+import Link from "next/link";
+import { Globe, Users, Plus, X, Briefcase } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
@@ -31,7 +32,14 @@ export default function StartupPage() {
         subtitle={isOwner ? "Manage your company profile" : "Your startup"}
         actions={
           isOwner && !editing ? (
-            <Button onClick={() => setEditing(true)}>Edit startup</Button>
+            <>
+              <Button asChild variant="outline">
+                <Link href="/recruitment">
+                  <Briefcase className="h-4 w-4" /> Recruitment
+                </Link>
+              </Button>
+              <Button onClick={() => setEditing(true)}>Edit startup</Button>
+            </>
           ) : undefined
         }
       />
@@ -69,9 +77,19 @@ export default function StartupPage() {
           </div>
 
           <div className="mt-6">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Open Roles ({startup.openRoles.length})
-            </h3>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Open Roles ({startup.openRoles.length})
+              </h3>
+              {isOwner && (
+                <Link
+                  href="/recruitment"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                >
+                  Review applications <Briefcase className="h-3.5 w-3.5" />
+                </Link>
+              )}
+            </div>
             {startup.openRoles.length === 0 ? (
               <p className="text-sm text-muted-foreground">No open roles right now.</p>
             ) : (

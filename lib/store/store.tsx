@@ -37,7 +37,7 @@ interface DB {
   currentUserId: string | null;
 }
 
-const STORAGE_KEY = "crewboot.db.v1";
+const STORAGE_KEY = "crewboot.db.v2";
 
 const defaultSettings: UserSettings = {
   emailNotifications: true,
@@ -103,7 +103,7 @@ interface StoreApi {
   updateStartup: (id: string, patch: Partial<Startup>) => void;
 
   // Join requests
-  requestToJoin: (startupId: string, message: string) => void;
+  requestToJoin: (startupId: string, message: string, roleId?: string) => void;
   respondToRequest: (requestId: string, accept: boolean) => void;
 
   // Messaging
@@ -243,14 +243,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   /* ----- join requests ----- */
-  const requestToJoin: StoreApi["requestToJoin"] = (startupId, message) => {
+  const requestToJoin: StoreApi["requestToJoin"] = (startupId, message, roleId) => {
     if (!currentUser) return;
     const startup = db.startups.find((s) => s.id === startupId);
     if (!startup) return;
+    const role = roleId
+      ? startup.openRoles.find((r) => r.id === roleId)
+      : undefined;
     const req: JoinRequest = {
       id: uid("jr"),
       startupId,
       requesterId: currentUser.id,
+      roleId: role?.id,
+      roleTitle: role?.title,
       message,
       status: "pending",
       createdAt: Date.now(),
@@ -262,9 +267,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         addNotification(prev, {
           userId: startup.ownerId,
           type: "join_request",
-          title: `${currentUser.name} wants to join ${startup.name}`,
+          title: role
+            ? `${currentUser.name} applied for ${role.title} at ${startup.name}`
+            : `${currentUser.name} wants to join ${startup.name}`,
           body: message || "No message provided.",
-          href: "/notifications",
+          href: "/recruitment",
         }),
         ...prev.notifications,
       ],

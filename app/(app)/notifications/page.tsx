@@ -71,7 +71,10 @@ export default function NotificationsPage() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="font-medium text-foreground">
-                        {requester?.name} wants to join {startup?.name}
+                        {requester?.name}{" "}
+                        {r.roleTitle
+                          ? `applied for ${r.roleTitle} at ${startup?.name}`
+                          : `wants to join ${startup?.name}`}
                       </p>
                       <p className="text-sm text-muted-foreground">{r.message || "No message provided."}</p>
                     </div>

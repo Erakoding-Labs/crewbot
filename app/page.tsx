@@ -18,9 +18,9 @@ export default function LandingPage() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-            F
+            C
           </div>
-          <span className="text-lg font-semibold">FounderOS</span>
+          <span className="text-lg font-semibold">Crewboot</span>
         </div>
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost">
@@ -42,7 +42,7 @@ export default function LandingPage() {
           <span className="text-primary">co-founders & team</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-          FounderOS helps early-stage founders find serious team members, talk to investors,
+          Crewboot helps early-stage founders find serious team members, talk to investors,
           and get the knowledge they need to move forward — all in one place.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
@@ -71,7 +71,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} FounderOS — Let&apos;s create something meaningful to scale.
+        © {new Date().getFullYear()} Crewboot — Let&apos;s create something meaningful to scale.
       </footer>
     </div>
   );

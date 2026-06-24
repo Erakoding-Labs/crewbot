@@ -42,7 +42,7 @@ export default function SignupPage() {
 
   return (
     <AuthShell
-      title="Create your FounderOS account"
+      title="Create your Crewboot account"
       footer={
         <>
           Already have an account?{" "}

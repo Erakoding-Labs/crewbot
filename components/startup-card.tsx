@@ -14,7 +14,6 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { useStore } from "@/lib/store/store";
 import type { Startup } from "@/lib/types";
 
@@ -23,6 +22,7 @@ export function StartupCard({ startup }: { startup: Startup }) {
   const { currentUser, db, requestToJoin } = useStore();
   const [open, setOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  const [roleId, setRoleId] = React.useState("");
 
   // PRD rule: a user may belong to only one startup unless their current
   // startup has granted permission to join others.
@@ -33,9 +33,12 @@ export function StartupCard({ startup }: { startup: Startup }) {
     (r) => r.startupId === startup.id && r.requesterId === currentUser?.id
   );
 
+  const selectedRole = startup.openRoles.find((r) => r.id === roleId);
+
   const submit = () => {
-    requestToJoin(startup.id, message.trim());
+    requestToJoin(startup.id, message.trim(), roleId || undefined);
     setMessage("");
+    setRoleId("");
     setOpen(false);
   };
 
@@ -63,7 +66,7 @@ export function StartupCard({ startup }: { startup: Startup }) {
       <div className="mt-4 border-t border-border pt-4">
         {existingRequest ? (
           <Button variant="outline" className="w-full" disabled>
-            Request {existingRequest.status}
+            Application {existingRequest.status}
           </Button>
         ) : (
           <Button
@@ -72,7 +75,7 @@ export function StartupCard({ startup }: { startup: Startup }) {
             disabled={blockedByExclusivity}
             onClick={() => setOpen(true)}
           >
-            {blockedByExclusivity ? "Locked to current startup" : "Request to join"}
+            {blockedByExclusivity ? "Locked to current startup" : "Apply to join"}
           </Button>
         )}
         {blockedByExclusivity && (
@@ -85,22 +88,53 @@ export function StartupCard({ startup }: { startup: Startup }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Request to join {startup.name}</DialogTitle>
+            <DialogTitle>Apply to {startup.name}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Message to the founder</label>
-            <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Tell them why you're a great fit"
-              autoFocus
-            />
+
+          <p className="text-sm text-muted-foreground">{startup.description}</p>
+
+          <div className="space-y-4">
+            {startup.openRoles.length > 0 && (
+              <div className="space-y-1.5">
+                <label className="text-sm text-muted-foreground">Role you&apos;re applying for</label>
+                <select
+                  value={roleId}
+                  onChange={(e) => setRoleId(e.target.value)}
+                  className="flex h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="">General interest (no specific role)</option>
+                  {startup.openRoles.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.title}
+                    </option>
+                  ))}
+                </select>
+                {selectedRole?.description && (
+                  <p className="text-xs text-muted-foreground">{selectedRole.description}</p>
+                )}
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <label className="text-sm text-muted-foreground">Why you&apos;re a great fit</label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={4}
+                placeholder="Introduce yourself, your relevant experience, and why this startup. This is what the founder reviews."
+                autoFocus
+                className="flex w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
           </div>
+
           <DialogFooter className="gap-2">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button onClick={submit}>Send request</Button>
+            <Button onClick={submit} disabled={!message.trim()}>
+              Send application
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

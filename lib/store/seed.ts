@@ -143,20 +143,56 @@ export const seedUsers: User[] = [
     startupId: "s-machi",
     canJoinOthers: false,
   },
+  {
+    id: "u-priya",
+    email: "priya@dev.io",
+    password: "password",
+    role: "team_member",
+    createdAt: 1_700_800_000_000,
+    name: "Priya Sharma",
+    avatarColor: "bg-rose-500/20 text-rose-400",
+    location: "Bengaluru, India",
+    bio: "Frontend engineer. Next.js, React, TypeScript, Tailwind. I obsess over fast, accessible, responsive UI and clean component design.",
+    skills: ["Next.js", "React", "TypeScript", "Tailwind CSS", "UI/UX"],
+    experience: "4 years building product UIs at two seed-stage SaaS startups.",
+    linkedin: "https://linkedin.com/in/priyasharma",
+    portfolio: "https://priya.dev",
+  },
+  {
+    id: "u-marco",
+    email: "marco@dev.io",
+    password: "password",
+    role: "team_member",
+    createdAt: 1_700_850_000_000,
+    name: "Marco Rossi",
+    avatarColor: "bg-teal-500/20 text-teal-300",
+    location: "Berlin, Germany",
+    bio: "Full-stack leaning frontend. Love design systems and shipping polished products quickly.",
+    skills: ["React", "TypeScript", "Node", "Design Systems"],
+    experience: "3 years across two startups, last one acquired.",
+    linkedin: "https://linkedin.com/in/marcorossi",
+    portfolio: "https://marcorossi.dev",
+  },
 ];
 
 export const seedStartups: Startup[] = [
   {
     id: "s-xyz",
     ownerId: "u-akshay",
-    name: "XYZ corp.",
+    name: "Crewboot",
     industry: "Productivity / SaaS",
     description:
-      "An operating system for founders — bringing team, fundraising, and learning into one place.",
+      "Crewboot is the operating system for early-stage founders. We bring the four things a founder juggles every week — building the right team, talking to investors, learning fast, and getting AI guidance — into one focused home, so you spend less time switching between spreadsheets, CRMs, and bookmarks and more time moving your company forward. Today we help founders find serious co-founders and teammates, run a lightweight task board, track an investor pipeline, and get an AI copilot that actually knows their context.",
     stage: "Seed",
-    website: "https://xyz.co",
+    website: "https://crewboot.co",
     teamSize: 4,
     openRoles: [
+      {
+        id: "r-frontend",
+        title: "Frontend Developer",
+        description:
+          "Own the Crewboot web app end to end. You'll build the founder dashboard, discovery, messaging, and recruitment surfaces in Next.js 14 (App Router), React, TypeScript, and Tailwind — shipping fast, polished, responsive UI that works on every device. You care about UX details, design-system consistency, and clean, reusable components. Bonus: an eye for product and motion. This is a founding-team role with real ownership and equity.",
+      },
       {
         id: "r-1",
         title: "Founding Backend Engineer",
@@ -210,7 +246,7 @@ export const seedMessages: Message[] = [
     conversationId: "c-akshay-sarah",
     senderId: "u-sarah",
     content:
-      "Hi Akshay — saw XYZ corp. on Discover. The founder-tooling angle is interesting. What's your traction so far?",
+      "Hi Akshay — saw Crewboot on Discover. The founder-tooling angle is interesting. What's your traction so far?",
     timestamp: 1_701_000_100_000,
   },
   {
@@ -230,7 +266,30 @@ export const seedMessages: Message[] = [
   },
 ];
 
-export const seedJoinRequests: JoinRequest[] = [];
+export const seedJoinRequests: JoinRequest[] = [
+  {
+    id: "jr-priya",
+    startupId: "s-xyz",
+    requesterId: "u-priya",
+    roleId: "r-frontend",
+    roleTitle: "Frontend Developer",
+    message:
+      "Hi Akshay — I'd love to join Crewboot as your Frontend Developer. I've spent the last 4 years building product UIs in Next.js + TypeScript + Tailwind, and the founder-OS vision really resonates. I can own the web app end to end and care a lot about responsive, polished UX. Portfolio attached — happy to walk through past work.",
+    status: "pending",
+    createdAt: 1_701_200_000_000,
+  },
+  {
+    id: "jr-marco",
+    startupId: "s-xyz",
+    requesterId: "u-marco",
+    roleId: "r-frontend",
+    roleTitle: "Frontend Developer",
+    message:
+      "Excited about Crewboot. Strong React/TypeScript background and a soft spot for design systems. Would love to help ship the dashboard and recruitment surfaces.",
+    status: "pending",
+    createdAt: 1_701_250_000_000,
+  },
+];
 
 export const seedNotifications: Notification[] = [
   {
@@ -238,7 +297,7 @@ export const seedNotifications: Notification[] = [
     userId: "u-akshay",
     type: "message",
     title: "New message from Sarah Chen",
-    body: "Hi Akshay — saw XYZ corp. on Discover...",
+    body: "Hi Akshay — saw Crewboot on Discover...",
     read: false,
     href: "/messages?c=c-akshay-sarah",
     timestamp: 1_701_000_100_000,
@@ -262,5 +321,25 @@ export const seedNotifications: Notification[] = [
     read: true,
     href: "/messages?c=c-akshay-david",
     timestamp: 1_701_100_100_000,
+  },
+  {
+    id: "n-4",
+    userId: "u-akshay",
+    type: "join_request",
+    title: "Priya Sharma applied for Frontend Developer at Crewboot",
+    body: "Hi Akshay — I'd love to join Crewboot as your Frontend Developer...",
+    read: false,
+    href: "/recruitment",
+    timestamp: 1_701_200_000_000,
+  },
+  {
+    id: "n-5",
+    userId: "u-akshay",
+    type: "join_request",
+    title: "Marco Rossi applied for Frontend Developer at Crewboot",
+    body: "Excited about Crewboot. Strong React/TypeScript background...",
+    read: false,
+    href: "/recruitment",
+    timestamp: 1_701_250_000_000,
   },
 ];

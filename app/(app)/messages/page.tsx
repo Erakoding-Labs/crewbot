@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Send } from "lucide-react";
+import { Send, Compass } from "lucide-react";
 
 import { cn, timeAgo } from "@/lib/utils";
 import { PageHeader } from "@/components/page-header";
@@ -60,9 +61,14 @@ function MessagesInner() {
         {/* Conversation list */}
         <Card className={cn("overflow-y-auto p-2 scrollbar-thin", selected && "hidden lg:block")}>
           {myConvos.length === 0 ? (
-            <p className="p-6 text-center text-sm text-muted-foreground">
-              No conversations yet. Find people on Discover.
-            </p>
+            <div className="flex flex-col items-center gap-3 p-6 text-center">
+              <p className="text-sm text-muted-foreground">No conversations yet.</p>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/discover">
+                  <Compass className="h-4 w-4" /> Find people on Discover
+                </Link>
+              </Button>
+            </div>
           ) : (
             myConvos.map((c) => {
               const u = other(c);

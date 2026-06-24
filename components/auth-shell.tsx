@@ -16,9 +16,9 @@ export function AuthShell({
         <div className="mx-auto w-full max-w-sm">
           <Link href="/" className="mb-8 flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-white">
-              F
+              C
             </div>
-            <span className="text-lg font-semibold">FounderOS</span>
+            <span className="text-lg font-semibold">Crewboot</span>
           </Link>
           <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
           {children}
@@ -34,9 +34,9 @@ export function AuthShell({
             Creativity runs on
             <span className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/20 text-base font-bold">
-                F
+                C
               </span>
-              FounderOS
+              Crewboot
             </span>
           </p>
         </div>

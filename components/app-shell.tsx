@@ -47,9 +47,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </button>
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-              F
+              C
             </div>
-            <span className="text-sm font-semibold">FounderOS</span>
+            <span className="text-sm font-semibold">Crewboot</span>
           </div>
         </div>
 
@@ -91,9 +91,9 @@ function MadeWithPill() {
   return (
     <div className="fixed bottom-5 right-5 z-20 flex items-center gap-2 rounded-full border border-border bg-popover/90 px-4 py-2 text-sm text-foreground shadow-lg backdrop-blur">
       <span className="flex h-4 w-4 items-center justify-center rounded-sm bg-primary text-[10px] font-bold text-primary-foreground">
-        F
+        C
       </span>
-      Made with FounderOS
+      Made with Crewboot
     </div>
   );
 }

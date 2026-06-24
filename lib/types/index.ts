@@ -1,4 +1,4 @@
-/** Shared domain types for FounderOS. All data is mock; these model the entities. */
+/** Shared domain types for Crewboot. All data is mock; these model the entities. */
 
 export type Stage = "Pre-Seed" | "Seed" | "Series A" | "Series B";
 
@@ -137,6 +137,9 @@ export interface JoinRequest {
   id: string;
   startupId: string;
   requesterId: string;
+  /** The open role being applied for (optional — a general request has none). */
+  roleId?: string;
+  roleTitle?: string;
   message: string;
   status: RequestStatus;
   createdAt: number;

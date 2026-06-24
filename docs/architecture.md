@@ -54,10 +54,14 @@ On top of the original Replit dashboard, the PRD MVP features are implemented as
 
 ### Full route map
 - Public: `/` (landing), `/login`, `/signup`, `/forgot-password`
-- App (`(app)` group, guarded): `/dashboard`, `/team`, `/discover`, `/investors`, `/messages`, `/notifications`, `/learning`, `/copilot`, `/profile`, `/startup`, `/settings`
+- App (`(app)` group, guarded): `/dashboard`, `/team`, `/discover`, `/investors`, `/messages`, `/notifications`, `/learning`, `/copilot`, `/profile`, `/startup`, `/recruitment`, `/settings`
+  - **`/recruitment`** is founder-only (rendered in the sidebar and guarded in-page when the current user owns a startup). It lists applications to the founder's startup (review + accept/decline + message) and manages open roles. Non-owners are redirected to `/dashboard`.
 
 ### New shared components
-`UserCard` (Discover people + message action), `StartupCard` (Discover startups + request-to-join with the PRD one-startup exclusivity rule), `AuthShell` (signup/forgot split-screen).
+`UserCard` (Discover people + message action), `StartupCard` (Discover startups + apply-to-a-role dialog: pick an open role + write a pitch, with the PRD one-startup exclusivity rule), `ApplicantCard` (an application on the Recruitment board), `AuthShell` (signup/forgot split-screen).
+
+### Applications
+A `JoinRequest` optionally carries `roleId`/`roleTitle` — the open role applied for via `requestToJoin(startupId, message, roleId?)`. Founders review them on `/recruitment`; the applicant's pitch is the `message`.
 
 ## Key Design Decisions
 

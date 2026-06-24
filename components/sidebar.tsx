@@ -16,6 +16,7 @@ import {
   LogOut,
   User as UserIcon,
   Building2,
+  Briefcase,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -32,12 +33,6 @@ const NAV = [
   { label: "AI Copilot", href: "/copilot", icon: Bot },
 ];
 
-const SECONDARY = [
-  { label: "My Profile", href: "/profile", icon: UserIcon },
-  { label: "My Startup", href: "/startup", icon: Building2 },
-  { label: "Settings", href: "/settings", icon: Settings },
-];
-
 /** Sidebar contents — reused by both the desktop rail and the mobile drawer. */
 export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
@@ -46,6 +41,17 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   const unread = unreadNotificationCount();
   const startup = getStartup(currentUser?.startupId);
+
+  // Recruitment is a founder-only surface — only the owner of a startup sees it.
+  const isFounder = !!startup && startup.ownerId === currentUser?.id;
+  const secondaryNav = [
+    { label: "My Profile", href: "/profile", icon: UserIcon },
+    { label: "My Startup", href: "/startup", icon: Building2 },
+    ...(isFounder
+      ? [{ label: "Recruitment", href: "/recruitment", icon: Briefcase }]
+      : []),
+    { label: "Settings", href: "/settings", icon: Settings },
+  ];
 
   const linkClass = (href: string) => {
     const active = pathname === href;
@@ -62,10 +68,10 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {/* Brand */}
       <div className="flex items-center gap-3 px-6 py-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-primary-foreground">
-          F
+          C
         </div>
         <div className="leading-tight">
-          <p className="text-sm font-semibold text-foreground">FounderOS</p>
+          <p className="text-sm font-semibold text-foreground">Crewboot</p>
           <p className="text-xs text-muted-foreground">{startup?.name ?? "No startup yet"}</p>
         </div>
       </div>
@@ -92,7 +98,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         <div className="my-2 mx-3 border-t border-border" />
 
-        {SECONDARY.map(({ label, href, icon: Icon }) => {
+        {secondaryNav.map(({ label, href, icon: Icon }) => {
           const active = pathname === href;
           return (
             <Link key={href} href={href} onClick={onNavigate} className={linkClass(href)}>

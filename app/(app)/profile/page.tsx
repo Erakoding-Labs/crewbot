@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { MapPin, Linkedin, Link2, Briefcase, X } from "lucide-react";
+import Link from "next/link";
+import { MapPin, Linkedin, Link2, Briefcase, X, Building2, Compass } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/page-header";
@@ -60,7 +61,7 @@ export default function ProfilePage() {
     <>
       <PageHeader
         title="My Profile"
-        subtitle="How others see you on FounderOS"
+        subtitle="How others see you on Crewboot"
         actions={
           editing ? (
             <>
@@ -68,7 +69,22 @@ export default function ProfilePage() {
               <Button onClick={save}>Save</Button>
             </>
           ) : (
-            <Button onClick={() => setEditing(true)}>Edit profile</Button>
+            <>
+              {currentUser.startupId ? (
+                <Button asChild variant="outline">
+                  <Link href="/startup">
+                    <Building2 className="h-4 w-4" /> My Startup
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild variant="outline">
+                  <Link href="/discover">
+                    <Compass className="h-4 w-4" /> Find a startup
+                  </Link>
+                </Button>
+              )}
+              <Button onClick={() => setEditing(true)}>Edit profile</Button>
+            </>
           )
         }
       />

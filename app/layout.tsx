@@ -7,7 +7,7 @@ import { StoreProvider } from "@/lib/store/store";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FounderOS",
+  title: "Crewboot",
   description: "The operating system for founders — team, investors, and learning in one place.",
 };
 

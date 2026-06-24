@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Search } from "lucide-react";
+import Link from "next/link";
+import { Search, Compass } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
 import { InvestorCard } from "@/components/investor-card";
 import { FilterPills, type FilterOption } from "@/components/filter-pills";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useAppState } from "@/components/app-state";
@@ -62,6 +64,13 @@ export default function InvestorsPage() {
       <PageHeader
         title="Investors"
         subtitle="Discover and connect with the right investors for your stage"
+        actions={
+          <Button asChild variant="outline">
+            <Link href="/discover">
+              <Compass className="h-4 w-4" /> Message investors on Discover
+            </Link>
+          </Button>
+        }
       />
 
       <Tabs defaultValue="all">
