@@ -12,6 +12,9 @@ import type {
   Notification,
   UserSettings,
   UserRole,
+  ProjectTask,
+  TaskStatus,
+  Priority,
 } from "@/lib/types";
 import {
   seedUsers,
@@ -20,6 +23,7 @@ import {
   seedMessages,
   seedJoinRequests,
   seedNotifications,
+  seedTasks,
 } from "@/lib/store/seed";
 
 /* -------------------------------------------------------------------------- */
@@ -30,6 +34,7 @@ interface DB {
   users: User[];
   startups: Startup[];
   joinRequests: JoinRequest[];
+  tasks: ProjectTask[];
   conversations: Conversation[];
   messages: Message[];
   notifications: Notification[];
@@ -37,7 +42,7 @@ interface DB {
   currentUserId: string | null;
 }
 
-const STORAGE_KEY = "crewboot.db.v3";
+const STORAGE_KEY = "crewboot.db.v4";
 
 const defaultSettings: UserSettings = {
   emailNotifications: true,
@@ -50,6 +55,7 @@ function freshDB(): DB {
     users: seedUsers,
     startups: seedStartups,
     joinRequests: seedJoinRequests,
+    tasks: seedTasks,
     conversations: seedConversations,
     messages: seedMessages,
     notifications: seedNotifications,
@@ -105,6 +111,30 @@ interface StoreApi {
   // Join requests
   requestToJoin: (startupId: string, message: string, roleId?: string) => void;
   respondToRequest: (requestId: string, accept: boolean) => void;
+
+  // Team / project management
+  getStartupMembers: (startupId: string) => User[];
+  setMemberRole: (startupId: string, userId: string, role: string) => void;
+  getTasks: (startupId: string) => ProjectTask[];
+  createTask: (input: {
+    startupId: string;
+    title: string;
+    description?: string;
+    assigneeId?: string;
+    priority: Priority;
+    dueDate?: number;
+  }) => void;
+  updateTask: (
+    id: string,
+    patch: Partial<
+      Pick<
+        ProjectTask,
+        "title" | "description" | "assigneeId" | "priority" | "dueDate" | "status"
+      >
+    >
+  ) => void;
+  setTaskStatus: (id: string, status: TaskStatus) => void;
+  deleteTask: (id: string) => void;
 
   // Messaging
   getOrCreateConversation: (otherUserId: string) => Conversation;
@@ -317,6 +347,113 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  /* ----- team / project management ----- */
+  const getStartupMembers: StoreApi["getStartupMembers"] = (startupId) =>
+    db.users.filter((u) => u.startupId === startupId);
+
+  const setMemberRole: StoreApi["setMemberRole"] = (startupId, userId, role) => {
+    setDb((prev) => ({
+      ...prev,
+      startups: prev.startups.map((s) =>
+        s.id === startupId
+          ? {
+              ...s,
+              memberRoles: { ...(s.memberRoles ?? {}), [userId]: role.trim() },
+            }
+          : s
+      ),
+    }));
+  };
+
+  const getTasks: StoreApi["getTasks"] = (startupId) =>
+    db.tasks.filter((t) => t.startupId === startupId);
+
+  // Notify a member that a task was assigned to them (skip self-assignment).
+  const taskAssignedNotif = (
+    prev: DB,
+    assigneeId: string,
+    taskTitle: string,
+    startupId: string
+  ): Notification[] => {
+    if (!currentUser || assigneeId === currentUser.id) return prev.notifications;
+    const startup = prev.startups.find((s) => s.id === startupId);
+    return [
+      addNotification(prev, {
+        userId: assigneeId,
+        type: "task_assigned",
+        title: `${currentUser.name} assigned you a task`,
+        body: `“${taskTitle}”${startup ? ` · ${startup.name}` : ""}`,
+        href: "/team",
+      }),
+      ...prev.notifications,
+    ];
+  };
+
+  const createTask: StoreApi["createTask"] = (input) => {
+    if (!currentUser) return;
+    const task: ProjectTask = {
+      id: uid("pt"),
+      startupId: input.startupId,
+      title: input.title.trim(),
+      description: input.description?.trim() || undefined,
+      assigneeId: input.assigneeId || undefined,
+      status: "todo",
+      priority: input.priority,
+      dueDate: input.dueDate,
+      createdBy: currentUser.id,
+      createdAt: Date.now(),
+    };
+    if (!task.title) return;
+    setDb((prev) => ({
+      ...prev,
+      tasks: [task, ...prev.tasks],
+      notifications: task.assigneeId
+        ? taskAssignedNotif(prev, task.assigneeId, task.title, task.startupId)
+        : prev.notifications,
+    }));
+  };
+
+  const updateTask: StoreApi["updateTask"] = (id, patch) => {
+    setDb((prev) => {
+      const existing = prev.tasks.find((t) => t.id === id);
+      if (!existing) return prev;
+      const next: ProjectTask = {
+        ...existing,
+        ...patch,
+        title: patch.title !== undefined ? patch.title.trim() : existing.title,
+        description:
+          patch.description !== undefined
+            ? patch.description.trim() || undefined
+            : existing.description,
+        assigneeId:
+          patch.assigneeId !== undefined
+            ? patch.assigneeId || undefined
+            : existing.assigneeId,
+      };
+      // Notify only when the assignee actually changes to a new person.
+      const reassigned =
+        patch.assigneeId !== undefined &&
+        next.assigneeId &&
+        next.assigneeId !== existing.assigneeId;
+      return {
+        ...prev,
+        tasks: prev.tasks.map((t) => (t.id === id ? next : t)),
+        notifications: reassigned
+          ? taskAssignedNotif(prev, next.assigneeId!, next.title, next.startupId)
+          : prev.notifications,
+      };
+    });
+  };
+
+  const setTaskStatus: StoreApi["setTaskStatus"] = (id, status) =>
+    setDb((prev) => ({
+      ...prev,
+      tasks: prev.tasks.map((t) => (t.id === id ? { ...t, status } : t)),
+    }));
+
+  const deleteTask: StoreApi["deleteTask"] = (id) =>
+    setDb((prev) => ({ ...prev, tasks: prev.tasks.filter((t) => t.id !== id) }));
+
   /* ----- messaging ----- */
   const getOrCreateConversation: StoreApi["getOrCreateConversation"] = (
     otherUserId
@@ -421,6 +558,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     updateStartup,
     requestToJoin,
     respondToRequest,
+    getStartupMembers,
+    setMemberRole,
+    getTasks,
+    createTask,
+    updateTask,
+    setTaskStatus,
+    deleteTask,
     getOrCreateConversation,
     sendMessage,
     markNotificationRead,

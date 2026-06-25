@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Bell, Check, UserPlus, MessageSquare, Info } from "lucide-react";
+import { Bell, Check, UserPlus, MessageSquare, Info, ListChecks } from "lucide-react";
 
 import { cn, timeAgo } from "@/lib/utils";
 import { PageHeader } from "@/components/page-header";
@@ -15,6 +15,7 @@ const ICONS: Record<NotificationType, React.ElementType> = {
   request_accepted: Check,
   request_declined: Info,
   message: MessageSquare,
+  task_assigned: ListChecks,
   system: Info,
 };
 

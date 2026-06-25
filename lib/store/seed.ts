@@ -5,6 +5,7 @@ import type {
   Message,
   Notification,
   JoinRequest,
+  ProjectTask,
 } from "@/lib/types";
 
 /**
@@ -216,6 +217,12 @@ export const seedStartups: Startup[] = [
     stage: "Seed",
     website: "https://crewboot.co",
     teamSize: 4,
+    memberRoles: {
+      "u-akshay": "Founder & CEO",
+      "u-jordan": "CTO",
+      "u-mia": "Head of Design",
+      "u-liam": "Growth Lead",
+    },
     openRoles: [
       {
         id: "r-frontend",
@@ -254,6 +261,96 @@ export const seedStartups: Startup[] = [
       },
     ],
     createdAt: 1_700_700_000_000,
+  },
+];
+
+/**
+ * Project board for Crewboot (s-xyz). Mix of statuses, assignees, and
+ * priorities so progress tracking and the board render with real data.
+ * Due dates are fixed 2026 timestamps so the demo reads sensibly.
+ */
+export const seedTasks: ProjectTask[] = [
+  {
+    id: "pt-1",
+    startupId: "s-xyz",
+    title: "Set up CI/CD pipeline",
+    description: "GitHub Actions for lint, type-check, and preview deploys.",
+    assigneeId: "u-jordan",
+    status: "done",
+    priority: "High",
+    createdBy: "u-akshay",
+    createdAt: 1_701_000_000_000,
+  },
+  {
+    id: "pt-2",
+    startupId: "s-xyz",
+    title: "Launch referral program",
+    description: "Double-sided referral with shareable invite links.",
+    assigneeId: "u-liam",
+    status: "done",
+    priority: "Medium",
+    createdBy: "u-akshay",
+    createdAt: 1_701_010_000_000,
+  },
+  {
+    id: "pt-3",
+    startupId: "s-xyz",
+    title: "Migrate auth to OAuth",
+    description: "Google + GitHub sign-in, replace the mock login flow.",
+    assigneeId: "u-jordan",
+    status: "in-progress",
+    priority: "High",
+    dueDate: 1_781_913_600_000,
+    createdBy: "u-akshay",
+    createdAt: 1_701_020_000_000,
+  },
+  {
+    id: "pt-4",
+    startupId: "s-xyz",
+    title: "Design system v2",
+    description: "Token cleanup, dark-mode polish, and a component audit.",
+    assigneeId: "u-mia",
+    status: "in-progress",
+    priority: "Medium",
+    dueDate: 1_783_209_600_000,
+    createdBy: "u-akshay",
+    createdAt: 1_701_030_000_000,
+  },
+  {
+    id: "pt-5",
+    startupId: "s-xyz",
+    title: "SEO content sprint",
+    description: "Ten cornerstone articles targeting founder keywords.",
+    assigneeId: "u-liam",
+    status: "todo",
+    priority: "Low",
+    dueDate: 1_784_073_600_000,
+    createdBy: "u-akshay",
+    createdAt: 1_701_040_000_000,
+  },
+  {
+    id: "pt-6",
+    startupId: "s-xyz",
+    title: "Customer interview round",
+    description: "Talk to 15 founders about weekly workflow pain.",
+    assigneeId: "u-akshay",
+    status: "todo",
+    priority: "Medium",
+    dueDate: 1_783_209_600_000,
+    createdBy: "u-akshay",
+    createdAt: 1_701_050_000_000,
+  },
+  {
+    id: "pt-7",
+    startupId: "s-xyz",
+    title: "Onboarding redesign",
+    description: "Cut the wizard to three steps and add progress saving.",
+    assigneeId: "u-mia",
+    status: "todo",
+    priority: "High",
+    dueDate: 1_784_073_600_000,
+    createdBy: "u-akshay",
+    createdAt: 1_701_060_000_000,
   },
 ];
 

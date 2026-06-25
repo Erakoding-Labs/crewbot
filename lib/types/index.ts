@@ -17,18 +17,14 @@ export interface Investor {
 
 export type TaskStatus = "todo" | "in-progress" | "done";
 
-export interface Task {
-  id: string;
-  title: string;
-  assigneeId?: string;
-  status: TaskStatus;
-}
+/** Display labels + column order for the three task statuses. */
+export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
+  todo: "Todo",
+  "in-progress": "In Progress",
+  done: "Done",
+};
 
-export interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-}
+export const TASK_STATUS_ORDER: TaskStatus[] = ["todo", "in-progress", "done"];
 
 export type ResourceCategory =
   | "Product"
@@ -171,6 +167,27 @@ export interface Startup {
   website: string;
   teamSize: number;
   openRoles: OpenRole[];
+  /** Per-member role/title within the team (userId -> role), set by the founder. */
+  memberRoles?: Record<string, string>;
+  createdAt: number;
+}
+
+/**
+ * A unit of work on a startup's project board: store-backed, scoped to a
+ * startup, and assignable to a real team member.
+ */
+export interface ProjectTask {
+  id: string;
+  startupId: string;
+  title: string;
+  description?: string;
+  /** Assigned team member (a User id), or undefined when unassigned. */
+  assigneeId?: string;
+  status: TaskStatus;
+  priority: Priority;
+  /** Optional due date (epoch ms). */
+  dueDate?: number;
+  createdBy: string;
   createdAt: number;
 }
 
@@ -208,6 +225,7 @@ export type NotificationType =
   | "request_accepted"
   | "request_declined"
   | "message"
+  | "task_assigned"
   | "system";
 
 export interface Notification {

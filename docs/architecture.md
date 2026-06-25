@@ -48,7 +48,7 @@ lib/
 
 On top of the original Replit dashboard, the PRD MVP features are implemented as a client-side platform:
 
-- **`lib/store/store.tsx` — `StoreProvider` / `useStore`**: a single localStorage-backed store (`crewboot.db.v1`) holding `users`, `startups`, `joinRequests`, `conversations`, `messages`, `notifications`, `settings`, and `currentUserId`. Exposes auth (`signup`/`login`/`logout`), profile/startup CRUD, join requests, messaging, notifications, and settings. Mounted at the **root layout** so both `/login` and the app can use it.
+- **`lib/store/store.tsx` — `StoreProvider` / `useStore`**: a single localStorage-backed store (`crewboot.db.v4`) holding `users`, `startups`, `joinRequests`, `tasks`, `conversations`, `messages`, `notifications`, `settings`, and `currentUserId`. Exposes auth (`signup`/`login`/`logout`), profile/startup CRUD, join requests, **project management** (`getStartupMembers`, `setMemberRole`, `getTasks`, `createTask`, `updateTask`, `setTaskStatus`, `deleteTask`), messaging, notifications, and settings. Mounted at the **root layout** so both `/login` and the app can use it.
 - **`lib/store/seed.ts`**: initial users (across all roles), startups, conversations, messages, notifications. Demo account: `akshaycrln@gmail.com` / `password`.
 - **Auth guard**: `AppShell` redirects to `/login` when there is no session; shows a loading state until the store hydrates (avoids SSR/localStorage mismatch).
 
@@ -59,9 +59,10 @@ Signup now only collects name/email/password and routes to **`/onboarding`** —
 - Public: `/` (landing — purpose, who-it's-for, how-it-works, CTA), `/login`, `/signup`, `/onboarding` (auth-gated wizard), `/forgot-password`
 - App (`(app)` group, guarded): `/dashboard`, `/team`, `/discover`, `/investors`, `/messages`, `/notifications`, `/learning`, `/copilot`, `/profile`, `/startup`, `/recruitment`, `/settings`
   - **`/recruitment`** is founder-only (rendered in the sidebar and guarded in-page when the current user owns a startup). It lists applications to the founder's startup (review + accept/decline + message) and manages open roles. Non-owners are redirected to `/dashboard`.
+  - **`/team`** is the project-management hub for the current user's startup: overview stats + overall progress, a Task Board (Todo/In Progress/Done kanban), and a Members & Roles roster. Store-backed via `tasks` + `Startup.memberRoles`. Founders create/edit/delete/assign tasks and set member roles; any member can move a task's status. Assignment fires a `task_assigned` notification. Users without a startup see a join/create empty state.
 
 ### New shared components
-`UserCard` (Discover people + message action), `StartupCard` (Discover startups + apply-to-a-role dialog: pick an open role + write a pitch, with the PRD one-startup exclusivity rule), `ApplicantCard` (an application on the Recruitment board), `AuthShell` (signup/forgot split-screen).
+`UserCard` (Discover people + message action), `StartupCard` (Discover startups + apply-to-a-role dialog: pick an open role + write a pitch, with the PRD one-startup exclusivity rule), `ApplicantCard` (an application on the Recruitment board), `AuthShell` (signup/forgot split-screen), `TaskCard` + `TaskDialog` (project board card + create/edit form), `TeamMemberCard` (roster tile with role + workload), `UserAvatar` (initial tile from `avatarColor`, shared by task/member cards).
 
 ### Applications
 A `JoinRequest` optionally carries `roleId`/`roleTitle` — the open role applied for via `requestToJoin(startupId, message, roleId?)`. Founders review them on `/recruitment`; the applicant's pitch is the `message`.

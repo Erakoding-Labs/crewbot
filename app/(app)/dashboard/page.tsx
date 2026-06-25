@@ -13,19 +13,20 @@ import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/components/app-state";
 import { useStore } from "@/lib/store/store";
 
-import { teamMembers, tasks } from "@/lib/mock/team";
 import { insights, actionItems } from "@/lib/mock/copilot";
 
 export default function DashboardPage() {
   const { savedInvestors, completedResources } = useAppState();
-  const { currentUser, getStartup } = useStore();
+  const { currentUser, getStartup, getStartupMembers, getTasks } = useStore();
   const startup = getStartup(currentUser?.startupId);
   const isFounder = !!startup && startup.ownerId === currentUser?.id;
 
+  const members = startup ? getStartupMembers(startup.id) : [];
+  const tasks = startup ? getTasks(startup.id) : [];
   const done = tasks.filter((t) => t.status === "done").length;
   const inProgress = tasks.filter((t) => t.status === "in-progress").length;
   const todo = tasks.filter((t) => t.status === "todo").length;
-  const completion = Math.round((done / tasks.length) * 100);
+  const completion = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
 
   return (
     <>
@@ -54,7 +55,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Team Members"
-          value={teamMembers.length}
+          value={members.length}
           icon={Users}
           iconClassName="h-5 w-5 text-blue-400"
           href="/team"

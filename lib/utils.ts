@@ -19,3 +19,19 @@ export function timeAgo(ts: number): string {
   const wk = Math.floor(day / 7);
   return `${wk}w`;
 }
+
+/** Short calendar date, e.g. "Jul 5". Year is added only when not the current one. */
+export function formatDate(ts: number): string {
+  const d = new Date(ts);
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    ...(sameYear ? {} : { year: "numeric" }),
+  });
+}
+
+/** Whether a due date is in the past (overdue). */
+export function isOverdue(ts: number): boolean {
+  return ts < Date.now();
+}
