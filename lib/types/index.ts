@@ -88,6 +88,45 @@ export const USER_ROLE_LABELS: Record<UserRole, string> = {
   service_provider: "Service Provider",
 };
 
+/** One-line description of each role — used on the landing page + onboarding. */
+export const USER_ROLE_DESCRIPTIONS: Record<UserRole, string> = {
+  founder: "Building a startup and looking for a team, investors, or guidance.",
+  team_member: "Want to join an early-stage startup and build something real.",
+  investor: "Backing early-stage founders and looking for your next deal.",
+  mentor: "Sharing hard-won experience to help founders move faster.",
+  service_provider: "Offering design, dev, legal, or growth services to startups.",
+};
+
+/** How much time a user can commit — drives matching + shown on profiles. */
+export type Availability =
+  | "Full-time"
+  | "Part-time"
+  | "Weekends"
+  | "Just exploring";
+
+export const AVAILABILITY_OPTIONS: Availability[] = [
+  "Full-time",
+  "Part-time",
+  "Weekends",
+  "Just exploring",
+];
+
+/** Suggested project-interest tags offered during onboarding. */
+export const INTEREST_OPTIONS = [
+  "AI / ML",
+  "SaaS",
+  "Fintech",
+  "Healthtech",
+  "Marketplace",
+  "Developer Tools",
+  "Consumer",
+  "Climate",
+  "E-commerce",
+  "Web3",
+  "Education",
+  "Productivity",
+];
+
 /** Account + profile combined (1:1 in this mock store). */
 export interface User {
   id: string;
@@ -105,6 +144,11 @@ export interface User {
   experience: string;
   linkedin: string;
   portfolio: string;
+  /** Matching signals collected during onboarding. */
+  availability?: Availability;
+  interests?: string[];
+  /** Whether the user finished the post-signup onboarding wizard. */
+  onboarded?: boolean;
   // Membership: the single startup this user belongs to (PRD: one active startup)
   startupId?: string;
   /** Whether the owning startup permits this member to join others (PRD authority rule). */

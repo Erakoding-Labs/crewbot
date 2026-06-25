@@ -37,7 +37,7 @@ interface DB {
   currentUserId: string | null;
 }
 
-const STORAGE_KEY = "crewboot.db.v2";
+const STORAGE_KEY = "crewboot.db.v3";
 
 const defaultSettings: UserSettings = {
   emailNotifications: true,
@@ -175,6 +175,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       experience: "",
       linkedin: "",
       portfolio: "",
+      interests: [],
+      onboarded: false,
     };
     setDb((prev) => ({
       ...prev,

@@ -52,8 +52,11 @@ On top of the original Replit dashboard, the PRD MVP features are implemented as
 - **`lib/store/seed.ts`**: initial users (across all roles), startups, conversations, messages, notifications. Demo account: `akshaycrln@gmail.com` / `password`.
 - **Auth guard**: `AppShell` redirects to `/login` when there is no session; shows a loading state until the store hydrates (avoids SSR/localStorage mismatch).
 
+### Onboarding (post-signup)
+Signup now only collects name/email/password and routes to **`/onboarding`** — a full-screen 4-step wizard (role → skills → availability → interests) that lives outside the `(app)` group (root layout only, no sidebar). On finish it calls `updateProfile({ role, skills, availability, interests, onboarded: true })` and routes to `/dashboard`. `AppShell` enforces this: a signed-in user with `onboarded !== true` is redirected to `/onboarding`. New `User` fields: `availability` (`Availability` union), `interests: string[]`, `onboarded: boolean`. These feed matching — surfaced on `UserCard` and searchable on Discover.
+
 ### Full route map
-- Public: `/` (landing), `/login`, `/signup`, `/forgot-password`
+- Public: `/` (landing — purpose, who-it's-for, how-it-works, CTA), `/login`, `/signup`, `/onboarding` (auth-gated wizard), `/forgot-password`
 - App (`(app)` group, guarded): `/dashboard`, `/team`, `/discover`, `/investors`, `/messages`, `/notifications`, `/learning`, `/copilot`, `/profile`, `/startup`, `/recruitment`, `/settings`
   - **`/recruitment`** is founder-only (rendered in the sidebar and guarded in-page when the current user owns a startup). It lists applications to the founder's startup (review + accept/decline + message) and manages open roles. Non-owners are redirected to `/dashboard`.
 

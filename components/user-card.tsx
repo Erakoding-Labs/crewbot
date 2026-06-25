@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { MapPin, MessageSquare } from "lucide-react";
+import { MapPin, MessageSquare, Clock } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
@@ -35,6 +35,11 @@ export function UserCard({ user }: { user: User }) {
           <p className="truncate font-semibold text-foreground">{user.name}</p>
           <p className="text-sm text-primary">{USER_ROLE_LABELS[user.role]}</p>
         </div>
+        {user.availability && (
+          <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-md bg-surface-hover px-2 py-0.5 text-xs text-muted-foreground">
+            <Clock className="h-3 w-3" /> {user.availability}
+          </span>
+        )}
       </div>
 
       {user.bio && (
@@ -47,6 +52,13 @@ export function UserCard({ user }: { user: User }) {
             <TagBadge key={s} label={s} />
           ))}
         </div>
+      )}
+
+      {user.interests && user.interests.length > 0 && (
+        <p className="mt-3 text-xs text-muted-foreground">
+          <span className="text-foreground">Interested in:</span>{" "}
+          {user.interests.slice(0, 3).join(" · ")}
+        </p>
       )}
 
       {user.location && (

@@ -19,11 +19,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   React.useEffect(() => {
-    if (ready && !currentUser) router.replace("/login");
+    if (!ready) return;
+    if (!currentUser) router.replace("/login");
+    // New users must finish onboarding before entering the app.
+    else if (!currentUser.onboarded) router.replace("/onboarding");
   }, [ready, currentUser, router]);
 
   // Avoid flashing protected content before the session is known.
-  if (!ready || !currentUser) {
+  if (!ready || !currentUser || !currentUser.onboarded) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
         Loading…

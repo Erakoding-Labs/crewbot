@@ -38,7 +38,8 @@ export default function DiscoverPage() {
         u.name.toLowerCase().includes(q) ||
         u.bio.toLowerCase().includes(q) ||
         u.location.toLowerCase().includes(q) ||
-        u.skills.some((s) => s.toLowerCase().includes(q))
+        u.skills.some((s) => s.toLowerCase().includes(q)) ||
+        (u.interests ?? []).some((i) => i.toLowerCase().includes(q))
     );
 
   const startups = db.startups

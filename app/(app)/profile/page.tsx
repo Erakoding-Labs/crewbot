@@ -11,7 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TagBadge } from "@/components/badges";
 import { useStore } from "@/lib/store/store";
-import { USER_ROLE_LABELS } from "@/lib/types";
+import {
+  AVAILABILITY_OPTIONS,
+  INTEREST_OPTIONS,
+  USER_ROLE_LABELS,
+  type Availability,
+} from "@/lib/types";
+import { Clock } from "lucide-react";
 
 export default function ProfilePage() {
   const { currentUser, updateProfile } = useStore();
@@ -26,6 +32,8 @@ export default function ProfilePage() {
     linkedin: "",
     portfolio: "",
     skills: [] as string[],
+    availability: undefined as Availability | undefined,
+    interests: [] as string[],
   });
   const [skillInput, setSkillInput] = React.useState("");
 
@@ -39,6 +47,8 @@ export default function ProfilePage() {
         linkedin: currentUser.linkedin,
         portfolio: currentUser.portfolio,
         skills: currentUser.skills,
+        availability: currentUser.availability,
+        interests: currentUser.interests ?? [],
       });
   }, [currentUser, editing]);
 
@@ -111,6 +121,11 @@ export default function ProfilePage() {
             <Field label="Bio" value={currentUser.bio} />
             <Field label="Experience" value={currentUser.experience} icon={<Briefcase className="h-4 w-4" />} />
             <Field label="Location" value={currentUser.location} icon={<MapPin className="h-4 w-4" />} />
+            <Field
+              label="Availability"
+              value={currentUser.availability ?? ""}
+              icon={<Clock className="h-4 w-4" />}
+            />
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Skills</p>
               {currentUser.skills.length ? (
@@ -119,6 +134,16 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">No skills added yet.</p>
+              )}
+            </div>
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Interests</p>
+              {currentUser.interests?.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {currentUser.interests.map((i) => <TagBadge key={i} label={i} />)}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No interests added yet.</p>
               )}
             </div>
             <div className="flex flex-wrap gap-4">
@@ -163,6 +188,56 @@ export default function ProfilePage() {
                   placeholder="Add a skill and press Enter"
                 />
                 <Button type="button" variant="outline" onClick={addSkill}>Add</Button>
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm text-muted-foreground">Availability</label>
+              <select
+                value={form.availability ?? ""}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    availability: (e.target.value || undefined) as Availability | undefined,
+                  }))
+                }
+                className="flex h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="">Not set</option>
+                {AVAILABILITY_OPTIONS.map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm text-muted-foreground">Interests</label>
+              <div className="flex flex-wrap gap-2">
+                {INTEREST_OPTIONS.map((i) => {
+                  const active = form.interests.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() =>
+                        setForm((f) => ({
+                          ...f,
+                          interests: active
+                            ? f.interests.filter((x) => x !== i)
+                            : [...f.interests, i],
+                        }))
+                      }
+                      className={cn(
+                        "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                        active
+                          ? "border-transparent bg-primary text-primary-foreground"
+                          : "border-border bg-surface text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                      )}
+                    >
+                      {i}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
